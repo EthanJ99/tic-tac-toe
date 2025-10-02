@@ -1,5 +1,10 @@
-import Game from "./components/App"
+import { StrictMode } from "react"
+import App from "./components/App"
 
 export default function Home() {
-  return <Game />
+  return(
+    <StrictMode>
+      <App />
+    </StrictMode>
+  )
 }
