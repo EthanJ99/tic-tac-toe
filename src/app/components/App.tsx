@@ -1,8 +1,10 @@
 'use client'
 import { useState, type MouseEventHandler } from "react";
 
+type SquareValue = "X" | "O" | null;
+
 interface SquareProps {
-  value: string,
+  value: SquareValue,
   onSquareClick: MouseEventHandler
 }
 
@@ -19,8 +21,8 @@ function Square({value, onSquareClick}: SquareProps) {
 
 interface BoardProps {
   xIsNext: boolean,
-  squares: string[],
-  onPlay: Function
+  squares: SquareValue[],
+  onPlay: (nextSquares: SquareValue[]) => void;
   
 }
 
@@ -35,13 +37,13 @@ function Board({ xIsNext, squares, onPlay }: BoardProps) {
   }
 
   // Update value of individual square when user clicks it
-  function handleClick(i: number) {
-    if(squares[i] || calculateWinner(squares)){
+  function handleClick(clickedSquare: number) {
+    if(squares[clickedSquare] || calculateWinner(squares)){
       // Don't update if square is already filled, or if someone has won
       return;
     }
-    const nextSquares: string[] = squares.slice();
-    xIsNext ? nextSquares[i] = "X" : nextSquares[i] = "O";
+    const nextSquares: SquareValue[] = squares.slice();
+    nextSquares[clickedSquare] = xIsNext ?  "X" : "O";
 
     onPlay(nextSquares);
   }
@@ -86,7 +88,7 @@ export default function Game() {
   const xIsNext = currentMove % 2 == 0;
   const currentSquares = history[currentMove];
 
-  function handlePlay(nextSquares: string[]){
+  function handlePlay(nextSquares: SquareValue[]){
     const nextHistory = [...history.slice(0, currentMove + 1), nextSquares];
     setHistory(nextHistory);
     setCurrentMove(nextHistory.length - 1);
@@ -126,7 +128,7 @@ export default function Game() {
 }
 
 // This *could* be defined inside the Board function; it is only down here so I don't have to look at it <3
-function calculateWinner(squares: string[]) {
+function calculateWinner(squares: SquareValue[]) {
   let winner = null;
 
   // Hardcoded winning lines
